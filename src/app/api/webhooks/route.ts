@@ -1,6 +1,8 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
+import prisma from '@/lib/prisma'
+import { createUser } from '@/lib/users';
 
 export async function POST(req: Request) {
  
@@ -48,10 +50,20 @@ export async function POST(req: Request) {
   }
 
     console.log('checking evt type');
-  const { id } = evt.data
-  const eventType = evt.type
+
   if (evt.type === 'user.created') {
-    console.log('userId:', evt.data.id)
+    const { id, email_addresses } = evt.data;
+
+    if (!id || !email_addresses) {
+      return new Response('Error occurred -- missing data', { status: 400 });
+    }
+
+    const user = {
+      id: id,
+      email: email_addresses[0].email_address
+    }
+
+    await createUser(user);
   }
   return new Response('', { status: 200 })
 }
