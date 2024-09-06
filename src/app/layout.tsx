@@ -4,7 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import NavBar from "@/components/navBar";
 import { ClerkProvider } from "@clerk/nextjs";
-import Providers from "@/components/ui/Providers";
+import Providers from "@/components/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 

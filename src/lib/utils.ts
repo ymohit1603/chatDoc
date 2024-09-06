@@ -1,5 +1,10 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import {
+  generateUploadButton,
+  generateUploadDropzone,
+} from "@uploadthing/react"; 
+import { ourFileRouter } from "@/app/api/uploadthing/core";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -14,3 +19,6 @@ export function absoluteUrl(path: string) {
     process.env.PORT ?? 3000
   }${path}`
 }
+
+export const UploadButton = generateUploadButton<typeof ourFileRouter>();
+export const UploadDropzone = generateUploadDropzone<typeof ourFileRouter>();
