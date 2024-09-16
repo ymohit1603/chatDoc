@@ -4,7 +4,7 @@ import {
   generateUploadButton,
   generateUploadDropzone,
 } from "@uploadthing/react"; 
-import { ourFileRouter } from "@/app/api/uploadthing/core";
+import type { OurFileRouter } from "@/app/api/uploadthing/core";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -20,5 +20,6 @@ export function absoluteUrl(path: string) {
   }${path}`
 }
 
-export const UploadButton = generateUploadButton<typeof ourFileRouter>();
-export const UploadDropzone = generateUploadDropzone<typeof ourFileRouter>();
+ 
+export const UploadButton = generateUploadButton<OurFileRouter>();
+export const UploadDropzone = generateUploadDropzone<OurFileRouter>();

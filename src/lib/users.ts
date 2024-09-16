@@ -6,8 +6,8 @@ export async function createUser(data: User) {
     try {
       const user = await prisma.user.create({
         data: {
-          id,
-          email,
+          id:id,
+          email:email,
         },
       });
       console.log('User created:', user);
