@@ -18,10 +18,18 @@ interface PdfFullscreenProps {
 const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [numPages, setNumPages] = useState<number>()
-
+  
   const { toast } = useToast()
-
   const { width, ref } = useResizeDetector()
+
+  const handleLoadError = (error: any) => {
+    console.error('Error loading PDF:', error)
+    toast({
+      title: 'Error loading PDF',
+      description: 'Failed to load the PDF. Please check the URL or try again later.',
+      variant: 'destructive',
+    })
+  }
 
   return (
     <Dialog
@@ -52,25 +60,19 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
                   <Loader2 className='my-24 h-6 w-6 animate-spin' />
                 </div>
               }
-              onLoadError={() => {
-                toast({
-                  title: 'Error loading PDF',
-                  description: 'Please try again later',
-                  variant: 'destructive',
-                })
-              }}
-              onLoadSuccess={({ numPages }) =>
-                setNumPages(numPages)
-              }
+              onLoadError={handleLoadError}
+              onLoadSuccess={({ numPages }) => setNumPages(numPages)}
               file={fileUrl}
               className='max-h-full'>
-              {new Array(numPages).fill(0).map((_, i) => (
-                <Page
-                  key={i}
-                  width={width ? width : 1}
-                  pageNumber={i + 1}
-                />
-              ))}
+              {numPages && 
+                Array.from({ length: numPages }, (_, i) => (
+                  <Page
+                    key={i}
+                    width={width ? width : 1}
+                    pageNumber={i + 1}
+                  />
+                ))
+              }
             </Document>
           </div>
         </SimpleBar>
