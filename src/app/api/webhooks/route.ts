@@ -1,7 +1,6 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
-import prisma from '@/lib/prisma'
 import { createUser } from '@/lib/users';
 
 export async function POST(req: Request) {
@@ -60,7 +59,11 @@ export async function POST(req: Request) {
 
     const user = {
       id: id,
-      email: email_addresses[0].email_address
+      email: email_addresses[0].email_address,
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
+      stripePriceId: null,
+      stripeCurrentPeriodEnd: null,
     }
 
     await createUser(user);
