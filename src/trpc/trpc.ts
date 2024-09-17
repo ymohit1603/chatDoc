@@ -1,22 +1,25 @@
-import { getAuth } from '@clerk/nextjs/server';
+import { auth, currentUser, getAuth } from '@clerk/nextjs/server';
 import { TRPCError, initTRPC } from '@trpc/server';
-const t = initTRPC.create();
-const middleware = t.middleware;
+const t = initTRPC.create()
+const middleware = t.middleware
 
+const isAuth = middleware(async (opts) => {
+  const { userId } = auth();
+  const user = await currentUser()
+  
 
-const isAuth = middleware(({ ctx, next }) => {
-  if (!ctx.userId) {
-    throw new Error('Unauthorized');
+  if (!user || !userId) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' })
   }
 
-  return next({
+  return opts.next({
     ctx: {
-      ...ctx, 
+      userId: user.id,
+      user,
     },
-  });
-});
+  })
+})
 
-
-export const router = t.router;
-export const publicProcedure = t.procedure;
-export const privateProcedure = t.procedure.use(isAuth);  // Use isAuth for private routes
+export const router = t.router
+export const publicProcedure = t.procedure
+export const privateProcedure = t.procedure.use(isAuth)
