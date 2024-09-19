@@ -2,6 +2,7 @@ import PdfRenderer from "@/components/pdfRenderer"
 import prisma from "@/lib/prisma"
 import { notFound, redirect } from "next/navigation"
 import { auth, currentUser } from '@clerk/nextjs/server'
+import ChatWrapper from "@/components/chat/chatWrapper"
 
 interface PageProps {
   params: {
@@ -14,7 +15,7 @@ const Page = async ({ params }: PageProps) => {
   const { userId } = auth()
   
   if (!userId) {
-    redirect('/signin');
+    redirect('/sign-in');
     return null;
   }
 
@@ -40,12 +41,13 @@ const Page = async ({ params }: PageProps) => {
             <PdfRenderer url={file.url} />
           </div>
         </div>
+
         <div className='shrink-0 flex-[0.75] border-t border-gray-200 lg:w-96 lg:border-l lg:border-t-0'>
-          {/* Add any other components or content here */}
+          <ChatWrapper isSubscribed={false} fileId={file.id} />
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export default Page;

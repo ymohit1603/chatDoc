@@ -18,19 +18,7 @@ const ChatWrapper = ({
   fileId,
   isSubscribed,
 }: ChatWrapperProps) => {
-  const { data, isLoading } =
-    trpc.getFileUploadStatus.useQuery(
-      {
-        fileId,
-      },
-      {
-        refetchInterval: (data) =>
-          data?.status === 'SUCCESS' ||
-          data?.status === 'FAILED'
-            ? false
-            : 500,
-      }
-    )
+  const { data, error, isLoading } = trpc.getFileUploadStatus.useQuery({ fileId });
 
   if (isLoading)
     return (
@@ -85,11 +73,11 @@ const ChatWrapper = ({
                 {isSubscribed ? 'Pro' : 'Free'}
               </span>{' '}
               plan supports up to{' '}
-              {isSubscribed
+              {/* {isSubscribed
                 ? PLANS.find((p) => p.name === 'Pro')
                     ?.pagesPerPdf
                 : PLANS.find((p) => p.name === 'Free')
-                    ?.pagesPerPdf}{' '}
+                    ?.pagesPerPdf}{' '} */}
               pages per PDF.
             </p>
             <Link
