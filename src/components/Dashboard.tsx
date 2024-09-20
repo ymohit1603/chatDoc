@@ -5,10 +5,11 @@ import Skeleton from 'react-loading-skeleton'
 import MaxWidthWrapper from "./maxWidthWrapper";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog"; 
 import { useRouter } from 'next/navigation';
-import { UploadButton } from "@/lib/utils";
+import { UploadButton, UploadDropzone } from "@/lib/utils";
 import { trpc } from "@/app/_trpc/client";
 import Link from "next/link";
-import { Plus, MessageSquare, Loader2, Trash } from "lucide-react";
+import { Plus, MessageSquare, Loader2, Trash, Loader } from "lucide-react";
+import 'react-loading-skeleton/dist/skeleton.css';
 import { format } from "date-fns";
 
 const Dashboard = () => {
@@ -16,7 +17,7 @@ const Dashboard = () => {
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
    const [currentlyDeletingFile, setCurrentlyDeletingFile] =
     useState<string | null>(null)
-
+  const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
   const { data: files, isLoading } = trpc.getUserFiles.useQuery()
   const utils = trpc.useContext()
@@ -33,12 +34,14 @@ const Dashboard = () => {
   })
 
   const handleFileUploadComplete = (res: any) => {
-    console.log("File uploaded successfully:", res);
     setFileUploaded(true);
+    setIsUploading(false);
+    console.log("File uploaded successfully:", res);
     router.push('/dashboard/:id');
   };
 
   const handleFileUploadError = (err: any) => {
+    setIsUploading(false);
     console.error("Upload error:", err);
   };
 
@@ -49,7 +52,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">Your Files</h1>
             <div className="flex gap-2">
-              <Button variant="secondary" size="sm">
+              <Button variant="secondary" size="sm" disabled>
                 <LinkIcon className="w-4 h-4" />
                 Attach Link
               </Button>
@@ -61,13 +64,17 @@ const Dashboard = () => {
 
             <Dialog open={showUploadButton} onOpenChange={setShowUploadButton}>
               <DialogContent>
-                {!fileUploaded ? (
-                  <UploadButton
-                    endpoint="pdfUploader"
-                    onClientUploadComplete={handleFileUploadComplete}
-                    onUploadError={handleFileUploadError}
-                  />
-                ) : (
+                  {!fileUploaded ? (
+                isUploading?<div>uploading...</div>:(
+                  <div><UploadButton onUploadBegin={() => { setIsUploading(true) }}
+                  endpoint="pdfUploader"
+                  onClientUploadComplete={handleFileUploadComplete}
+                  onUploadError={handleFileUploadError}
+                    />
+                  <UploadDropzone onDrop={()=>setIsUploading(true)} onClientUploadComplete={handleFileUploadComplete}
+                  onUploadError={handleFileUploadError} endpoint="pdfUploader"/></div>
+                ) 
+                ): (
                   <p className="text-green-500">File uploaded successfully!</p>
                 )}
               </DialogContent>
@@ -135,7 +142,20 @@ const Dashboard = () => {
                 ))}
             </ul>) :
             (isLoading ? (
-              <Skeleton height={100} className='my-2' count={3} />) :
+              <div className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
+              <div className="col-span-1 rounded-lg">
+                <Skeleton height={120} width={320} className='my-2' count={3} />
+              </div>
+
+              <div className="col-span-1 rounded-lg ">
+                <Skeleton height={120} width={320} className='my-2' count={3} />
+              </div>
+
+              <div className="col-span-1 rounded-lg ">
+                <Skeleton height={120} width={320} className='my-2' count={3} />
+              </div>
+            </div>
+            )  :
               (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   No files
