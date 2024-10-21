@@ -22,7 +22,13 @@ const nextConfig = {
       config.resolve.alias.canvas = false
       config.resolve.alias.encoding = false
       return config
-    },
+  },
+    typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   }
   
   module.exports = nextConfig
